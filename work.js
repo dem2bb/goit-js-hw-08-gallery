@@ -9,7 +9,6 @@ const ref = {
 };
 
 let indexCurrentImage;
-
 const galleryCreater = (galleryItems) => {
   for (let i = 0; i < galleryItems.length; i++) {
     const text = `<li class="gallery__item">
@@ -39,9 +38,9 @@ function openModal(event) {
     return;
   }
   ref.modal.classList.add("is-open");
-  // indexCurrentImage = parseInt(event.target.dataset.index);
   ref.modalImg.src = event.target.dataset.source;
   ref.modalImg.alt = event.target.alt;
+  indexCurrentImage = parseInt(event.target.dataset.index);
 }
 
 function closeModal() {
@@ -56,7 +55,28 @@ function closeModalWithBackdrop() {
   closeModal();
 }
 
+function previousNextImg(event) {
+  let move;
+  if (event.code === "ArrowLeft") move = 1;
+  else if (event.code === "ArrowRight") move = -1;
+
+  if (move === undefined) return false;
+
+  console.log(indexCurrentImage);
+  // if (
+  //   indexCurrentImage + move < 0 ||
+  //   indexCurrentImage + move >= galleryItems.length
+  // )
+  //   return false;
+  if (indexCurrentImage + move < 0) indexCurrentImage = galleryItems.length - 1;
+  else if (indexCurrentImage + move >= galleryItems.length)
+    indexCurrentImage = 0;
+  else indexCurrentImage += move;
+  ref.modalImg.src = galleryItems[indexCurrentImage].original;
+}
+
 ref.container.addEventListener("click", openModal);
 ref.closebutton.addEventListener("click", closeModal);
 window.addEventListener("keydown", closeModalKey);
 ref.overlay.addEventListener("click", closeModalWithBackdrop);
+window.addEventListener("keydown", previousNextImg);
