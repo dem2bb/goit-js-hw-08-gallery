@@ -6,6 +6,7 @@ const ref = {
   modal: document.querySelector(".js-lightbox"),
   overlay: document.querySelector(".lightbox__overlay"),
   modalImg: document.querySelector(".lightbox__image"),
+  arrows: document.querySelector(".arrow-slider"),
 };
 
 let indexCurrentImage;
@@ -41,6 +42,7 @@ function openModal(event) {
   ref.modalImg.src = event.target.dataset.source;
   ref.modalImg.alt = event.target.alt;
   indexCurrentImage = parseInt(event.target.dataset.index);
+  ref.arrows.classList.remove("arrow-display");
 }
 
 function closeModal() {
@@ -61,13 +63,19 @@ function previousNextImg(event) {
   else if (event.code === "ArrowRight") move = -1;
 
   if (move === undefined) return false;
+  if (indexCurrentImage + move < 0) indexCurrentImage = galleryItems.length - 1;
+  else if (indexCurrentImage + move >= galleryItems.length)
+    indexCurrentImage = 0;
+  else indexCurrentImage += move;
+  ref.modalImg.src = galleryItems[indexCurrentImage].original;
+}
 
-  console.log(indexCurrentImage);
-  // if (
-  //   indexCurrentImage + move < 0 ||
-  //   indexCurrentImage + move >= galleryItems.length
-  // )
-  //   return false;
+function arrowsBackNext(event) {
+  if (event.target === event.currentTarget) return;
+  let move;
+  if (event.target.classList.contains("left-arrow")) move = 1;
+  if (event.target.classList.contains("right-arrow")) move = -1;
+  if (move === undefined) return false;
   if (indexCurrentImage + move < 0) indexCurrentImage = galleryItems.length - 1;
   else if (indexCurrentImage + move >= galleryItems.length)
     indexCurrentImage = 0;
@@ -80,3 +88,4 @@ ref.closebutton.addEventListener("click", closeModal);
 window.addEventListener("keydown", closeModalKey);
 ref.overlay.addEventListener("click", closeModalWithBackdrop);
 window.addEventListener("keydown", previousNextImg);
+ref.arrows.addEventListener("click", arrowsBackNext);
